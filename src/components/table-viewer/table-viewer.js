@@ -224,10 +224,24 @@ export default function CustomizedTables({
   const handleDeleteSubmit = (id) => {
     setOpenDeleteModal(false)
     setLoad(true);
-    ApiServices.deleteRowInTable(id).then((res) => {
-      setUrlData(urlData.filter((p) => p.id !== id));
-      setLoad(false);
-    });
+    ApiServices.deleteRowInTable(id)
+      .then((res) => {
+        setUrlData(urlData.filter((p) => p.id !== id));
+        setLoad(false);
+        setSnakeBar({
+          state: true,
+          message: "deleted Successfully.",
+          type: "success",
+        });
+      })
+      .catch((error) => {
+        setLoad(false);
+        setSnakeBar({
+          state: true,
+          message: error.message,
+          type: "error",
+        });
+      });
   };
 
   useEffect(() => {
