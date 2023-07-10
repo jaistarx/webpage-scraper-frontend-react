@@ -23,12 +23,12 @@ function Copyright(props) {
       align="center"
       {...props}
     >
-      {"Copyright © "}
-      <Link color="inherit" href="https://github.com/jaistarx" target="_blank">
-        Jaison J
-      </Link>{" "}
-      {new Date().getFullYear()}
-      {"."}
+      {"Note : Please enable "}
+      <Link color="inherit" href="https://cors-anywhere.herokuapp.com/corsdemo" target="_blank">
+        CORS PROXY
+      </Link>
+      {" if there is an error in fetching site's data."}
+      <span>{" (Request temporary access to the demo server)"}</span>
     </Typography>
   );
 }

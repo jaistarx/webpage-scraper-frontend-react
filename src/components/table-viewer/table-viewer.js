@@ -150,8 +150,8 @@ export default function CustomizedTables({
   };
 
   const parseLinksData = (data) => {
-    if (data.length > 70) {
-      data = data.substring(1, 70) + "...";
+    if (data.length > 50) {
+      data = data.substring(1, 50) + "...";
     }
     return data;
   };

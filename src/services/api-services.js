@@ -64,6 +64,6 @@ export async function getWebsiteInfo(url) {
       media_links: Array.from(mediaLinks),
     };
   } catch (error) {
-    console.error("Error scraping web:", error);
+    console.error("Error in fetching site's data:", error);
   }
 }
