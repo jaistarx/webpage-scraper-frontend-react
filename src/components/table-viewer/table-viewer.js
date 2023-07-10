@@ -20,6 +20,8 @@ import Loading from "../loading/loading";
 import "./table-viewer.css";
 import SimpleSnackbar from "../snackbar/snackbar";
 import * as UrlChecker from "../../helpers/url-checker";
+import Typography from '@mui/material/Typography';
+import Modal from '@mui/material/Modal';
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -43,6 +45,20 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
   },
 }));
 
+const deletModalStyle = {
+  position: 'absolute',
+  top: '50%',
+  left: '50%',
+  transform: 'translate(-50%, -50%)',
+  width: 500,
+  bgcolor: 'background.paper',
+  border: '2px solid #000',
+  borderRadius: '5px',
+  boxShadow: 24,
+  p: 4,
+};
+
+
 export default function CustomizedTables({
   load,
   setLoad,
@@ -54,6 +70,7 @@ export default function CustomizedTables({
   const [newUrlData, setNewUrlData] = useState({ url: "", favourite: false });
   const [drawerState, setDrawerState] = useState(false);
   const [rowData, setRowData] = useState({});
+  const [openDeleteModal, setOpenDeleteModal] = useState(false);
   const [snakeBar, setSnakeBar] = useState({
     state: false,
     message: "",
@@ -62,16 +79,16 @@ export default function CustomizedTables({
 
   const toggleDrawer =
     (open, row = {}) =>
-    (event) => {
-      if (
-        event.type === "keydown" &&
-        (event.key === "Tab" || event.key === "Shift")
-      ) {
-        return;
-      }
-      setRowData(row);
-      setDrawerState(open);
-    };
+      (event) => {
+        if (
+          event.type === "keydown" &&
+          (event.key === "Tab" || event.key === "Shift")
+        ) {
+          return;
+        }
+        setRowData(row);
+        setDrawerState(open);
+      };
 
   const list = () => (
     <Box
@@ -133,8 +150,8 @@ export default function CustomizedTables({
   };
 
   const parseLinksData = (data) => {
-    if (data.length > 50) {
-      data = data.substring(1, 50) + "...";
+    if (data.length > 70) {
+      data = data.substring(1, 70) + "...";
     }
     return data;
   };
@@ -204,7 +221,8 @@ export default function CustomizedTables({
     }
   };
 
-  const handleDelete = (id) => {
+  const handleDeleteSubmit = (id) => {
+    setOpenDeleteModal(false)
     setLoad(true);
     ApiServices.deleteRowInTable(id).then((res) => {
       setUrlData(urlData.filter((p) => p.id !== id));
@@ -308,10 +326,10 @@ export default function CustomizedTables({
                     />
                   )}
                 </StyledTableCell>
-                <StyledTableCell style={{ width: "25%" }}>
+                <StyledTableCell style={{ width: "25%", wordWrap: 'break-word' }}>
                   {parseLinksData(row.web_links)}
                 </StyledTableCell>
-                <StyledTableCell style={{ width: "25%" }}>
+                <StyledTableCell style={{ width: "25%", wordWrap: 'break-word' }}>
                   {parseLinksData(row.media_links)}
                 </StyledTableCell>
                 <StyledTableCell sx={{ textAlign: "right" }}>
@@ -364,13 +382,46 @@ export default function CustomizedTables({
                   )}
                   <div className="action-button">
                     <Button
-                      onClick={() => handleDelete(row.id)}
+                      onClick={() => setOpenDeleteModal(true)}
                       variant="contained"
                       color="error"
                       disabled={load}
                     >
                       Delete
                     </Button>
+                    <Modal
+                      open={openDeleteModal}
+                      aria-labelledby="modal-modal-title"
+                      aria-describedby="modal-modal-description"
+                    >
+                      <Box sx={deletModalStyle}>
+                        <Typography id="modal-modal-title" variant="h6" component="h2">
+                          Are you sure you want to delete?
+                        </Typography>
+                        <Typography id="modal-modal-description" sx={{ mt: 2, wordWrap: 'break-word' }}>
+                          {i + 1}.<a href={row.url}>{row.url}</a>
+                        </Typography>
+                        <Typography id="modal-modal-description" sx={{ mt: 2, textAlign: 'right' }}>
+                          <Button
+                            onClick={() => setOpenDeleteModal(false)}
+                            variant="contained"
+                            color="secondary"
+                            disabled={load}
+                          >
+                            Cancel
+                          </Button>
+                          <Button
+                            sx={{ ml: 3 }}
+                            onClick={() => handleDeleteSubmit(row.id)}
+                            variant="contained"
+                            color="error"
+                            disabled={load}
+                          >
+                            Delete
+                          </Button>
+                        </Typography>
+                      </Box>
+                    </Modal>
                   </div>
                 </StyledTableCell>
               </StyledTableRow>
