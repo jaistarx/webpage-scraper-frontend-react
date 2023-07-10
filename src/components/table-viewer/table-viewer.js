@@ -162,12 +162,14 @@ export default function CustomizedTables({
     return data;
   };
 
-  const handleEdit = (id, rowUrl, rowFavourite) => {
+  const handleEdit = (id, rowUrl, rowFavourite, event) => {
+    event?.preventDefault();
     setNewUrlData({ url: rowUrl, favourite: rowFavourite });
     setEditUrl({ state: true, rowId: id });
   };
 
-  const handleEditSubmit = (id, rowUrl, rowFavourite) => {
+  const handleEditSubmit = (id, rowUrl, rowFavourite, event) => {
+    event?.preventDefault();
     setEditUrl({ state: false, rowId: -1 });
     if (newUrlData.url !== rowUrl || newUrlData.favourite !== rowFavourite) {
       if (!newUrlData.url.length || !UrlChecker.isValidUrl(newUrlData.url)) {
@@ -221,7 +223,13 @@ export default function CustomizedTables({
     }
   };
 
-  const handleDeleteSubmit = (id) => {
+  const handleOpenDeleteModal = (state, event) => {
+    event?.preventDefault();
+    setOpenDeleteModal(state)
+  }
+
+  const handleDeleteSubmit = (id, event) => {
+    event?.preventDefault();
     setOpenDeleteModal(false)
     setLoad(true);
     ApiServices.deleteRowInTable(id)
@@ -230,7 +238,7 @@ export default function CustomizedTables({
         setLoad(false);
         setSnakeBar({
           state: true,
-          message: "deleted Successfully.",
+          message: "Deleted Successfully.",
           type: "success",
         });
       })
@@ -369,8 +377,8 @@ export default function CustomizedTables({
                   {editUrl.state && editUrl.rowId === row.id && (
                     <div className="action-button">
                       <Button
-                        onClick={() =>
-                          handleEditSubmit(row.id, row.url, row.favourite)
+                        onClick={(e) =>
+                          handleEditSubmit(row.id, row.url, row.favourite, e)
                         }
                         variant="contained"
                         color="secondary"
@@ -383,8 +391,8 @@ export default function CustomizedTables({
                   {editUrl.rowId !== row.id && (
                     <div className="action-button">
                       <Button
-                        onClick={() =>
-                          handleEdit(row.id, row.url, row.favourite)
+                        onClick={(e) =>
+                          handleEdit(row.id, row.url, row.favourite, e)
                         }
                         variant="contained"
                         color="info"
@@ -396,7 +404,7 @@ export default function CustomizedTables({
                   )}
                   <div className="action-button">
                     <Button
-                      onClick={() => setOpenDeleteModal(true)}
+                      onClick={(e) => handleOpenDeleteModal(true, e)}
                       variant="contained"
                       color="error"
                       disabled={load}
@@ -417,7 +425,7 @@ export default function CustomizedTables({
                         </Typography>
                         <Typography id="modal-modal-description" sx={{ mt: 2, textAlign: 'right' }}>
                           <Button
-                            onClick={() => setOpenDeleteModal(false)}
+                            onClick={(e) => handleOpenDeleteModal(false, e)}
                             variant="contained"
                             color="secondary"
                             disabled={load}
@@ -426,7 +434,7 @@ export default function CustomizedTables({
                           </Button>
                           <Button
                             sx={{ ml: 3 }}
-                            onClick={() => handleDeleteSubmit(row.id)}
+                            onClick={(e) => handleDeleteSubmit(row.id, e)}
                             variant="contained"
                             color="error"
                             disabled={load}
