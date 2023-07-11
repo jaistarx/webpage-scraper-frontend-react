@@ -101,7 +101,7 @@ export default function CustomizedTables({
       <div className="box-content">
         <div className="content">
           <div className="head-text">Domain Name</div>
-          <div>{rowData.url}</div>
+          <div><a href={rowData.url} target="_blank" rel="noopener noreferrer">{rowData.url}</a></div>
         </div>
         <Divider />
         <div style={{ display: "flex" }}>
